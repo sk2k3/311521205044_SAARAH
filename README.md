@@ -9,10 +9,15 @@ The system uses facial recognition to identify students in real-time via webcam,
 Key Features: 
 
 -Facial Recognition Technology: Identifies students' faces and marks attendance automatically.
+
 -Year-Specific Access: Secure login system with unique credentials for each year (1st to 4th year).
+
 -Dynamic Attendance Updates: Real-time attendance table rendering on the web interface.
+
 -Attendance Records: Generates and saves attendance as attendance_{year}_XX_XX_XXXX.csv in the attendance_records directory.
+
 -Camera Control: "Turn On" and "Turn Off" buttons to control the webcam feed.
+
 -Logout Functionality: Redirects to the login page upon clicking the logout button.
 
 
