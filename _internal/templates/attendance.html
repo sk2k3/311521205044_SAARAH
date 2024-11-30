@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Take Attendance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('static/Meenakshi-Sundararajan-Engineering-College-Chennai.png'); /* Replace with your image path */
+            background-size: cover;  /* Ensures the image covers the entire screen */
+            background-position: center;  /* Centers the image */
+            background-repeat: no-repeat;  /* Prevents the image from repeating */
+            background-attachment: fixed;  /* Keeps the image fixed during scrolling */
+            height: 100vh;  /* Ensures it covers the viewport */
+            width: 100%;
+        }
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);  /* Adjust opacity to your preference */
+            z-index: -1;  /* Keeps the overlay behind all content */
+        }
+
+        h1 {
+            text-align: center;
+            color: white
+        }
+
+        .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .webcam {
+            flex: 1;
+            margin-right: 20px;
+            max-height: 660px;
+            max-width: 660px; /* Adjust webcam width */
+        }
+
+        .attendance-table {
+            flex: 1;
+            max-width: 500px; /* Set maximum width for the table */
+            overflow-y: auto; /* Allow vertical scrolling */
+            height: 500px; /* Set a fixed height for the table */
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            border-radius: 10px; /* Rounded corners */
+            padding: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #1B4F72; /* Darker blue for header */
+        }
+
+        tr:hover {
+            background-color: #E0FFFF; /* Highlight row on hover */
+        }
+
+        .download {
+            text-align: center; /* Center the download button */
+            margin-bottom: 10px; /* Add some space below the button */
+        }
+
+        .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6bb1df; /* Same dark blue color */
+            color: white;
+            text-decoration: none;
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s;
+        }
+
+        .download-button:hover {
+            background-color: #3D9DC5; /* Lighter blue on hover */
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            flex: 1;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Container for the webcam and table */
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        /* Webcam feed styling */
+        .webcam {
+            width: 45%;  /* Adjust the width of the webcam */
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8); /* Optional background */
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+
+        /* Attendance table styling */
+        .attendance-table {
+            width: 40%;  /* Adjust the width of the table */
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            border: 2px solid #333;
+        }
+
+        /* Table styling (unchanged) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #6769f3;
+            color: white;
+        }
+
+        /* Make the table scrollable */
+        tbody {
+            display: block;
+            max-height: 450px; /* Controls how many rows are visible */
+            overflow-y: auto;
+        }
+
+        thead, tbody tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        .logout {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .logout-button {
+            background-color: #ff4d4d;
+            color: white;
+            margin-top: auto;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            background-color: #e60000;
+        }
+
+        .toggle-buttons {
+            text-align: center;
+            margin: 10px 0; /* Space between the download button and toggle buttons */
+        }
+
+        .toggle-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6bb1df;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 10px; /* Space between buttons */
+            cursor: pointer;
+        }
+
+        .toggle-button:hover {
+            background-color: #3D9DC5;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>{{ session.get('year', 'Unknown Year') }} IT Attendance</h1>
+
+    <div class="container">
+        <!-- Webcam feed -->
+        <div class="webcam">
+            <img id="webcam-feed" src="{{ url_for('video_feed') }}" width="100%" alt="Webcam Feed">
+        </div>
+
+        <!-- Attendance table -->
+        <div class="attendance-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Register Number</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="attendance-table-body">
+                    <!-- Rows populated via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="download">
+        <a target="_blank" href="{{ url_for('download_attendance',year= session['year']) }}" class="download-button">Download Attendance</a>
+    </div>
+
+    <div class="toggle-buttons">
+        <button id="turn-on" class="toggle-button">Turn On</button>
+        <button id="turn-off" class="toggle-button">Turn Off</button>
+    </div>
+
+    <div class="logout">
+        <form id="logout-form" action="{{ url_for('logout') }}" method="post" onsubmit="turnOffCamera()">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+
+<script>
+    let cameraOn = true;
+
+    document.getElementById('turn-on').onclick = function() {
+        if (!cameraOn) {
+            document.getElementById('webcam-feed').src = "{{ url_for('video_feed') }}"; // Resetting the video source to turn on the camera
+            cameraOn = true;
+        }
+    };
+
+    document.getElementById('turn-off').onclick = function() {
+        if (cameraOn) {
+            document.getElementById('webcam-feed').src = ""; // Clear the video source to turn off the camera
+            cameraOn = false;
+        }
+    };
+
+    function turnOffCamera() {
+        document.getElementById('webcam-feed').src = ""; // Clear the video source to turn off the camera
+        cameraOn = false; // Update the camera state
+    }
+
+    function fetchAttendanceData() {
+        fetch('/attendance_data')
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.getElementById('attendance-table-body');
+                tableBody.innerHTML = '';  // Clear the table
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    // Adjust keys based on your new DataFrame column names
+                    tr.innerHTML = `<td>${row['Register Number']}</td><td>${row['Student Name']}</td><td>${row['Status']}</td>`; // Use 'Status' instead of 'STATUS'
+                    tableBody.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching attendance data:', error);
+                const tableBody = document.getElementById('attendance-table-body');
+                tableBody.innerHTML = '<tr><td colspan="3">Error loading attendance data. Please try again later.</td></tr>';
+            });
+    }
+
+    setInterval(fetchAttendanceData, 5000);  // Update every 5 seconds
+
+</script>
+
+</body>
+</html>

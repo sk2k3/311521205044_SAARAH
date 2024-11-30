@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <style>
+        /* Position the logout button at the top right corner */
+        .logout-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ff4d4d;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .logout-button:hover {
+            background-color: #e60000;
+        }
+    </style>
+</head>
+<body>
+    <!-- Logout Button -->
+    <form action="{{ url_for('logout') }}" method="post" style="display: inline;">
+        <button type="submit" class="logout-button">Logout</button>
+    </form>
+
+    <div class="container">
+        <h2 class="text-center mt-5">Admin Panel</h2>
+        <h5>Upload Yearly Dataset</h5>
+        <form action="{{ url_for('upload_year_dataset') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="year">Select Year:</label>
+                <select class="form-control" id="year" name="year" required>
+                    <option value="1st Year">1st Year</option>
+                    <option value="2nd Year">2nd Year</option>
+                    <option value="3rd Year">3rd Year</option>
+                    <option value="4th Year">4th Year</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="image_zip">Upload Images (ZIP):</label>
+                <input type="file" class="form-control" id="image_zip" name="image_zip" required>
+            </div>
+            <div class="form-group">
+                <label for="csv_file">Upload Dataset (CSV):</label>
+                <input type="file" class="form-control" id="csv_file" name="csv_file" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Upload Dataset</button>
+        </form>
+
+        <h5 class="mt-5">Uploaded Status</h5>
+        <ul class="list-group">
+            {% for year, status in upload_status.items() %}
+                <li class="list-group-item">
+                    {{ year }}: {{ 'Uploaded' if status else 'Not Uploaded' }}
+                    {% if status %}
+                    <form action="{{ url_for('delete_year_dataset', year=year) }}" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-danger btn-sm float-right">Delete</button>
+                    </form>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
