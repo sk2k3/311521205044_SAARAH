@@ -27,7 +27,7 @@ Prerequisites
 - A webcam connected to the system.
 
 Setup Instructions:
-1. Within the "311521205044_SAARAH_AKTHAR" Folder, you will find a zip file called, "311521205044-Project". 
+1. Within the "311521205044_SAARAH_AKTHAR" Folder, you will find a zip file called, "311521205044_PROJECT". 
 
 2. Before unzipping the file, right click on it, and click on "Properties". 
 
